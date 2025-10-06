@@ -1,0 +1,64 @@
+AVRA: advanced AVR macro assembler Version 1.3.0 Build 1 (8 May 2010)
+Copyright (C) 1998-2010. Check out README file for more info
+
+   AVRA is an open source assembler for Atmel AVR microcontroller family
+   It can be used as a replacement of 'AVRASM32.EXE' the original assembler
+   shipped with AVR Studio. We do not guarantee full compatibility for avra.
+
+   AVRA comes with NO WARRANTY, to the extent permitted by law.
+   You may redistribute copies of avra under the terms
+   of the GNU General Public License.
+   For more information about these matters, see the files named COPYING.
+
+Device name | Flash size | RAM start | RAM size | EEPROM size |  Supported
+            |  (words)   | (bytes)   | (bytes)  |   (bytes)   | instructions
+------------+------------+-----------+----------+-------------+--------------
+ (default)  |    4194304 |    0x0060 |  8388608 |       65536 |          137
+ ATtiny10   |        512 |    0x0000 |        0 |           0 |           90
+ ATtiny11   |        512 |    0x0000 |        0 |           0 |           90
+ ATtiny12   |        512 |    0x0000 |        0 |          64 |           90
+ ATtiny13   |        512 |    0x0060 |       64 |          64 |          123
+ ATtiny13A  |        512 |    0x0060 |       64 |          64 |          123
+ ATtiny15   |        512 |    0x0000 |        0 |          64 |           90
+ ATtiny22   |       1024 |    0x0060 |      128 |         128 |          118
+ ATtiny24   |       1024 |    0x0060 |      128 |         128 |          123
+ ATtiny24A  |       1024 |    0x0060 |      128 |         128 |          123
+ ATtiny25   |       1024 |    0x0060 |      128 |         128 |          123
+ ATtiny26   |       1024 |    0x0060 |      128 |         128 |          120
+ ATtiny28   |       1024 |    0x0000 |        0 |           0 |           90
+ ATtiny44   |       2048 |    0x0060 |      256 |         256 |          123
+ ATtiny44A  |       2048 |    0x0060 |      256 |         256 |          123
+ ATtiny45   |       2048 |    0x0060 |      256 |         256 |          123
+ ATtiny84   |       4096 |    0x0060 |      512 |         512 |          123
+ ATtiny85   |       4096 |    0x0060 |      512 |         512 |          123
+ ATtiny2313 |       1024 |    0x0060 |      128 |         128 |          123
+ ATtiny2313A |       1024 |    0x0060 |      128 |         128 |          123
+ ATtiny4313 |       2048 |    0x0060 |      256 |         256 |          123
+ AT90S1200  |        512 |    0x0000 |        0 |          64 |           89
+ AT90S2313  |       1024 |    0x0060 |      128 |         128 |          118
+ AT90S2323  |       1024 |    0x0060 |      128 |         128 |          118
+ AT90S2333  |       1024 |    0x0060 |      128 |         128 |          118
+ AT90S2343  |       1024 |    0x0060 |      128 |         128 |          118
+ AT90S4414  |       2048 |    0x0060 |      256 |         256 |          118
+ AT90S4433  |       2048 |    0x0060 |      128 |         256 |          118
+ AT90S4434  |       2048 |    0x0060 |      256 |         256 |          118
+ AT90S8515  |       4096 |    0x0060 |      512 |         512 |          118
+ AT90C8534  |       4096 |    0x0060 |      256 |         512 |          118
+ AT90S8535  |       4096 |    0x0060 |      512 |         512 |          118
+ ATmega8    |       4096 |    0x0060 |     1024 |         512 |          129
+ ATmega161  |       8192 |    0x0060 |     1024 |         512 |          131
+ ATmega162  |       8192 |    0x0100 |     1024 |         512 |          131
+ ATmega163  |       8192 |    0x0060 |     1024 |         512 |          131
+ ATmega16   |       8192 |    0x0060 |     1024 |         512 |          131
+ ATmega323  |      16384 |    0x0060 |     2048 |        1024 |          131
+ ATmega328P |      16384 |    0x0100 |     2048 |        1024 |          131
+ ATmega32   |      16384 |    0x0060 |     2048 |        1024 |          131
+ ATmega603  |      32768 |    0x0060 |     4096 |        2048 |          120
+ ATmega103  |      65536 |    0x0060 |     4096 |        4096 |          121
+ ATmega104  |      65536 |    0x0060 |     4096 |        4096 |          134
+ ATmega128  |      65536 |    0x0100 |     4096 |        4096 |          134
+ ATmega48   |       2048 |    0x0100 |      512 |         256 |          131
+ ATmega88   |       4096 |    0x0100 |     1024 |         512 |          131
+ ATmega168  |       8192 |    0x0100 |     1024 |         512 |          131
+ ATmega8515 |       8192 |    0x0060 |      512 |         512 |          131
+ AT94K      |       8192 |    0x0060 |    16384 |           0 |          129

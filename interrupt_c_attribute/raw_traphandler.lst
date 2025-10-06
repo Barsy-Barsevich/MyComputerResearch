@@ -1,0 +1,46 @@
+void /*INT_ATTR*/__attribute__((section(".trap_text"))) raw_trap_handler()
+{
+    if (EPIC_CHECK_GPIO_IRQ())
+ 2000158:	00050737          	lui	a4,0x50
+ 200015c:	42072783          	lw	a5,1056(a4) # 50420 <__stack_size+0x50020>
+ 2000160:	0207f793          	and	a5,a5,32
+ 2000164:	e799                bnez	a5,2000172 <raw_trap_handler+0x1a>
+ * Returns:
+ * void.
+ */
+static inline __attribute__((always_inline)) void HAL_EPIC_Clear(uint32_t InterruptMask)
+{
+    EPIC->CLEAR = InterruptMask;
+ 2000166:	000507b7          	lui	a5,0x50
+ 200016a:	577d                li	a4,-1
+ 200016c:	40e7ac23          	sw	a4,1048(a5) # 50418 <__stack_size+0x50018>
+ 2000170:	8082                ret
+{
+ 2000172:	1141               	add	sp,sp,-16
+    {
+        if (HAL_GPIO_LineInterruptState(GPIO_LINE_2))
+ 2000174:	02000513          	li	a0,32
+{
+ 2000178:	c606               	sw	ra,12(sp)
+        if (HAL_GPIO_LineInterruptState(GPIO_LINE_2))
+ 200017a:	ff000097          	auipc	ra,0xff000
+ 200017e:	45c080e7          	jalr	1116(ra) # 10005d6 <HAL_GPIO_LineInterruptState>
+ 2000182:	c519               	beqz	a0,2000190 <raw_trap_handler+0x38>
+        {
+            flag = !flag;
+ 2000184:	8201a783          	lw	a5,-2016(gp) # 20001a8 <flag>
+ 2000188:	0017b793          	seqz	a5,a5
+ 200018c:	82f1a023          	sw	a5,-2016(gp) # 20001a8 <flag>
+        }
+        HAL_GPIO_ClearInterrupts();
+ 2000190:	ff000097          	auipc	ra,0xff000
+ 2000194:	460080e7          	jalr	1120(ra) # 10005f0 <HAL_GPIO_ClearInterrupts>
+    }
+    /* Сброс прерываний */
+    HAL_EPIC_Clear(0xFFFFFFFF);
+ 2000198:	40b2               	lw	ra,12(sp)
+ 200019a:	000507b7          	lui	a5,0x50
+ 200019e:	577d               	li	a4,-1
+ 20001a0:	40e7ac23          	sw	a4,1048(a5) # 50418 <__stack_size+0x50018>
+ 20001a4:	0141               	add	sp,sp,16
+ 20001a6:	8082               	ret

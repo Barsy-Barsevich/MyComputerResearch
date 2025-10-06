@@ -1,0 +1,120 @@
+
+.include "m8def.inc"
+
+.def temp = r16      ;общий регистр
+.def regdiv = r17
+.def counter = r18   ;счетчик, определяющий, какой из разрядов сейчас активен
+.def kathode = r19   ;регистр специально для катодов дисплея
+.equ kdiv = 250      ;коэффицент деления
+
+rjmp Reset
+.org OVF0addr
+rjmp TIM0_OVF
+.org INT_VECTORS_SIZE
+
+N_mask:
+.db 0b11111100, 0b01100000, 0b11011010, 0b11110010, 0b01100110, 0b10110110, 0b10111100, 0b11100000, 0b11111110, 0b11110110
+
+S_string:
+.db 1,2,3,4
+
+
+Reset:
+ldi temp, low(RAMEND)
+out SPL,temp
+ldi temp, high(RAMEND)
+out SPH,temp
+
+ldi temp,0xFE
+out DDRD,temp
+
+ldi temp,0x0F
+out DDRC,temp
+
+clr counter
+ldi kathode,0xF7    ;по умолчанию включен 4й индикатор
+
+ldi temp,(1<<TOIE0)
+out TIMSK,temp
+ldi regdiv,kdiv
+neg regdiv          ;256-regdiv, тк счетчик суммирующий
+out TCNT0,regdiv
+ldi temp,0x02       ;Timer0 включить 1/8
+out TCCR0,temp
+sei                 ;включаем прерывания
+cykle:
+rjmp cykle
+
+
+TIM0_OVF:
+; (1) дезактивируем катоды
+; (2) находим символ строки
+; (3) преобразуем символ в маску, выводим в порт
+; (4) разбираемся с катодами, выводим маску катодов
+; (5) разбираемся со счетчиком
+; (6) заряжаем таймер к сл разу
+
+; (1) дезактивируем катоды
+ldi temp,0xFF
+out PORTC,temp
+
+; (2) находим символ строки
+ldi ZH,high(S_string*2)
+ldi ZL,low(S_string*2)
+clr r0
+add ZL,counter
+adc ZH,r0
+lpm               ;находим цифру строки
+mov temp,r0       ;в регистре temp - цифра строки
+
+; (3) преобразуем символ в маску
+rcall function
+out PORTD,temp
+
+; (4) разбираемся с катодами, выводим маску катодов
+;программа обслуживания катодов
+sec               ;устанавливаем флаг с
+rol kathode       ;сдвиг влево kathode, lsb<=1
+sbrs kathode,4    ;пропустить сл операцию, если бит 4 kathode установлен
+ldi kathode,0xFE  ;устанавливаем kathode в начальное состояние
+out PORTC,kathode
+
+; (5) разбираемся со счетчиком
+inc counter
+cpi counter,4
+brne m1
+clr counter
+m1:
+
+; (6) заряжаем таймер к сл разу
+out TCNT0,regdiv
+reti
+
+
+function:
+ldi ZH,high(N_mask*2)
+ldi ZL,low(N_mask*2)
+clr r0
+add ZL,temp
+adc ZH,r0
+lpm
+;регистр r0 -- результат
+mov temp,r0
+ret
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

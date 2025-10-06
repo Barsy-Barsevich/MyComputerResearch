@@ -1,0 +1,176 @@
+.include "m8def.inc"
+
+.equ str_addr = SRAM_START
+
+.def temp = r16
+.def kathode = r17
+.def kat_counter = r18
+.def cycle_counter = r19
+
+; Прерывания
+rjmp Reset
+.org OC1Aaddr
+rjmp TIM1_COMPA
+.org INT_VECTORS_SIZE
+
+N_mask:
+.db 0b11111100, 0b01100000, 0b11011010, 0b11110010, 0b01100110, 0b10110110, 0b10111110, 0b11100000, 0b11111110, 0b11110110
+
+
+Reset:
+ldi temp,high(RAMEND)
+out SPH,temp
+ldi temp,low(RAMEND)
+out SPL,temp
+
+;ldi kathode,0b00111110
+ldi kat_counter,5
+ldi cycle_counter,0
+
+ldi XH,high(str_addr)
+ldi XL,low(str_addr)
+ldi temp,0
+st X+,temp
+ldi temp,0
+st X+,temp
+ldi temp,0
+st X+,temp
+ldi temp,0
+st X+,temp
+ldi temp,0
+st X+,temp
+ldi temp,0
+st X,temp
+
+ldi temp,0b11111111
+out DDRD,temp
+ldi temp,0b00111111
+out DDRC,temp
+
+ldi temp,high(499)  ;загрузка коэффициента деления
+out OCR1AH,temp
+ldi temp,low(499)
+out OCR1AL,temp
+
+;ldi temp,(1<<COM1A0)  ;Биты COM1A0 & COM1A1 - для установки поведения выходов OC1A
+;out TCCR1A,temp
+;ldi temp,0b00000010
+;out DDRB,temp
+
+ldi temp,0b00001010    ; включить таймер 1 1/8
+out TCCR1B,temp
+
+ldi temp,(1<<OCIE1A)  ;Разрешить прерывания по вектору TIM1_COMPA
+out TIMSK,temp
+
+sei
+
+cycle:
+rjmp cycle
+
+
+
+TIM1_COMPA:
+inc cycle_counter        ;увеличиваем счетчик
+cpi cycle_counter,250    ;если не равен 250, переходим к секции отображения
+brne disp_section
+ldi cycle_counter,0      ;если равен 250, обнуляем
+ldi XH,high(str_addr+5)
+ldi XL,low(str_addr+5)
+ld temp,X         ;загружаем значение едениц секунд
+inc temp          ;увеличиваем на 1
+st X,temp         ;сохраняем
+cpi temp,10       ;если не равно 10, переходим к секции отображения
+brne disp_section
+clr temp          ;обнуляем и сохраняем
+st X,temp
+
+ld temp,-X        ;загружаем значение десятков секунд
+inc temp          ;увеличиваем на 1
+st X,temp         ;сохраняем
+cpi temp,6        ;если не равно 6, переходим к секции отображения
+brne disp_section
+clr temp          ;обнуляем и сохраняем
+st X,temp
+
+ld temp,-X        ;загружаем значение едениц минут
+inc temp          ;увеличиваем на 1
+st X,temp         ;сохраняем
+cpi temp,10       ;если не равно 10, переходим к секции отображения
+brne disp_section
+clr temp          ;обнуляем и сохраняем
+st X,temp
+
+ld temp,-X        ;загружаем значение десятков минут
+inc temp          ;увеличиваем на 1
+st X,temp         ;сохраняем
+cpi temp,6        ;если не равно 6, переходим к секции отображения
+brne disp_section
+clr temp          ;обнуляем и сохраняем
+st X,temp
+
+ld temp,-X        ;загружаем значение едениц часов
+inc temp          ;увеличиваем на 1
+st X,temp         ;сохраняем
+cpi temp,4        ;если равно 4, переходим к анализу особого случая
+breq m3
+cpi temp,10       ;если не равно 10, переходим к секции отображения
+brne disp_section
+clr temp          ;обнуляем и сохраняем
+st X,temp
+
+ld temp,-X        ;загружаем значение едениц часов
+inc temp
+rjmp disp_section
+
+m3:
+ld temp,-X        ;загружаем значение десятков часов
+cpi temp,2        ;если не равно 2, переходим к секции отображения
+brne disp_section
+clr temp          ;обнуляем еденицы и десятки часов, сохраняем
+st X+,temp
+st X,temp
+
+
+disp_section:
+sec                      ;устанавливаем флаг с
+rol kathode              ;сдвиг влево kathode, lsb<=1
+andi kathode,0b00111111  ;очищаем старшие разряды kathode
+inc kat_counter          ;инкремент счетчика
+cpi kat_counter,6        ;если счетчик переполнен, обнуляем его и ставим 1й катод
+brne m1
+ldi kathode,0b00111110
+ldi kat_counter,0
+m1:
+
+ldi temp,0b00111111      ;гасим все индикаторы
+out PORTC,temp
+
+; достаем из памяти значение, которое надо вывести
+clr r0
+ldi XH,high(str_addr)
+ldi XL,low(str_addr)
+add XL,kat_counter
+adc XH,r0
+ld temp,X                ;temp - значение, которое нужно вывести
+rcall function           ;преобразуем в семисегментный код
+out PORTD,temp
+
+out PORTC,kathode
+reti
+
+
+
+
+
+
+function:
+ldi ZH,high(N_mask*2)
+ldi ZL,low(N_mask*2)
+clr r0
+add ZL,temp
+adc ZH,r0
+lpm
+;регистр r0 -- результат
+mov temp,r0
+ret

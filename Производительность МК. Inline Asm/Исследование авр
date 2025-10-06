@@ -1,0 +1,28 @@
+
+cycle LGT8F328P:    22
+cycle ATmega328P:   72
+
+Микроконтроллер:        LGT8F328P,32MHz     ATmega328P,16MHz
+Ядро:                   LGTX8               AVR Mega
+
+Время выполнения сложения, мкс
+float, double:          3.70                11.00
+uint8_t, int8_t:        0.10                0.44
+uint16_t, int16_t:      0.16                0.88
+uint32_t, int32_t:      0.34                1.76
+uint64_t, int64_t:      1.00                4.00
+
+Время выполнения умножения, мкс
+float, double:          3.50                9.24
+uint8_t, int8_t:        0.20                0.60
+uint16_t, int16_t:      0.42                1.36
+uint32_t, int32_t:      1.86                6.12
+uint64_t, int64_t:      7.50                22.76
+
+Время выполнения деления, мкс
+float, double:          14.82               31.92
+uint8_t, int8_t:        2.44                5.36
+uint16_t, int16_t:      6.44                13.56
+uint32_t, int32_t:      18.98               39.28
+uint64_t, int64_t:      23.64               50.36
+

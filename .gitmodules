@@ -1,0 +1,3 @@
+[submodule "tic-tac"]
+	path = tic-tac
+	url = ./tic-tac/
