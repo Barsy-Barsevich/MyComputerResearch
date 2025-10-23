@@ -15,7 +15,7 @@
     rv32imafc-ilp32f--;\
     rv32imafdc-ilp32--;\
     rv32imafdc-ilp32d--;\
-    rv32imafcp-ilp32f--;\
+    rv32imafc_zpn_zbpbo_zpsfoperand_zmmul-ilp32f--;\
     rv64i-lp64--;\
     rv64im-lp64--;\
     rv64ima-lp64--;\
